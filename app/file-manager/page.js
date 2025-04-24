@@ -61,7 +61,7 @@ export default function FileManager() {
     if (!window.confirm(`Are you sure you want to delete ${filename}?`)) return;
 
     try {
-      const response = await fetch(`http://54.86.30.33/s3/delete/${filename}`, {
+      const response = await fetch(`https://54.86.30.33/s3/delete/${filename}`, {
         method: "DELETE",
       });
 
