@@ -19,7 +19,7 @@ export default function Home() {
     e.preventDefault();
 
     try {
-      const res = await fetch("https://52.192.165.145:8081/email/send", {
+      const res = await fetch("https://52.192.165.145/email/send", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(form),
