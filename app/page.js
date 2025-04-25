@@ -1,5 +1,5 @@
 "use client";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import styles from "./page.module.css";
@@ -11,29 +11,58 @@ export default function Home() {
     body: "",
   });
 
+  const [history, setHistory] = useState([]);
+  const [loading, setLoading] = useState(false);
+
+  useEffect(() => {
+    fetch("https://13.113.28.205/email/history", {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      mode: "cors",
+    })
+      .then((res) => res.json())
+      .then((data) => setHistory(data))
+      .catch((err) => console.error("History Fetch Error:", err));
+  }, []);
+
   const handleChange = (e) => {
     setForm({ ...form, [e.target.name]: e.target.value });
   };
 
-  const handleSubmit = async (form) => {
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setLoading(true);
+
     try {
       const res = await fetch("https://13.113.28.205/email/send", {
         method: "POST",
-        headers: { 
+        headers: {
           "Content-Type": "application/json",
-          "Origin": "https://main.d18u6ezpsflfs9.amplifyapp.com"
+          "Origin": "https://main.d18u6ezpsflfs9.amplifyapp.com",
         },
         body: JSON.stringify(form),
-        mode: 'cors',
-        credentials: 'same-origin'
+        mode: "cors",
+        credentials: "same-origin",
       });
-  
+
       if (!res.ok) throw new Error(`HTTP error! status: ${res.status}`);
-      return await res.json();
-      
+      const result = await res.json();
+
+      alert("Email sent successfully!");
+      setForm({ to: "", subject: "", body: "" });
+
+      // Refresh history after send
+      const updatedHistory = await fetch("https://13.113.28.205/email/history").then((res) =>
+        res.json()
+      );
+      setHistory(updatedHistory);
     } catch (error) {
-      console.error('API Error:', error);
-      throw error;
+      console.error("API Error:", error);
+      alert("Email failed to send.");
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -86,11 +115,32 @@ export default function Home() {
               required
             />
           </label>
-          <button type="submit">Send Email</button>
+          <button type="submit" disabled={loading}>
+            {loading ? "Sending..." : "Send Email"}
+          </button>
         </form>
+
+        <section className={styles.history}>
+          <h2>Email History</h2>
+          {history.length === 0 ? (
+            <p>No email history found.</p>
+          ) : (
+            <ul>
+              {history.map((record) => (
+                <li key={record.id}>
+                  <strong>To:</strong> {record.toAddress} <br />
+                  <strong>Subject:</strong> {record.subject} <br />
+                  <strong>Sent At:</strong>{" "}
+                  {new Date(record.sentDate).toLocaleString()} <br />
+                  <strong>Status:</strong>{" "}
+                  {record.success ? " Success" : ` Failed: ${record.errorMessage}`} <br />
+                  <hr />
+                </li>
+              ))}
+            </ul>
+          )}
+        </section>
       </main>
-
-
     </div>
   );
 }
