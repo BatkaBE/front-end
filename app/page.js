@@ -15,21 +15,25 @@ export default function Home() {
     setForm({ ...form, [e.target.name]: e.target.value });
   };
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-
+  const handleSubmit = async (form) => {
     try {
-      const res = await fetch("https://52.192.165.145/email/send", {
+      const res = await fetch("https://13.113.28.205/email/send", {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers: { 
+          "Content-Type": "application/json",
+          "Origin": "https://main.d18u6ezpsflfs9.amplifyapp.com"
+        },
         body: JSON.stringify(form),
+        mode: 'cors',
+        credentials: 'same-origin'
       });
-
-      const data = await res.text();
-      alert("Response: " + data);
+  
+      if (!res.ok) throw new Error(`HTTP error! status: ${res.status}`);
+      return await res.json();
+      
     } catch (error) {
-      console.error("Error sending email:", error);
-      alert("Failed to send email.");
+      console.error('API Error:', error);
+      throw error;
     }
   };
 

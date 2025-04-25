@@ -16,7 +16,7 @@ export default function FileManager() {
 
   const fetchFiles = async () => {
     try {
-      const response = await fetch("https://52.192.165.145/s3/files");
+      const response = await fetch("http://54.86.30.33:8081/s3/files");
       if (!response.ok) throw new Error("Failed to fetch files");
       const data = await response.json();
       setFiles(data);
@@ -40,7 +40,7 @@ export default function FileManager() {
     formData.append("file", selectedFile);
 
     try {
-      const response = await fetch("https://52.192.165.145/s3/upload", {
+      const response = await fetch("http://54.86.30.33:8081/s3/upload", {
         method: "POST",
         body: formData,
       });
@@ -61,7 +61,7 @@ export default function FileManager() {
     if (!window.confirm(`Are you sure you want to delete ${filename}?`)) return;
 
     try {
-      const response = await fetch(`https://52.192.165.145/s3/delete/${filename}`, {
+      const response = await fetch(`http://54.86.30.33:8081/s3/delete/${filename}`, {
         method: "DELETE",
       });
 
