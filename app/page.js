@@ -15,7 +15,7 @@ export default function Home() {
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
-    fetch("https://13.113.28.205/email/history", {
+    fetch("http://localhost:8081/email/history", {
       method: "GET",
       headers: {
         "Content-Type": "application/json",
@@ -36,7 +36,7 @@ export default function Home() {
     setLoading(true);
 
     try {
-      const res = await fetch("https://13.113.28.205/email/send", {
+      const res = await fetch("http://localhost:8081/email/send", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -54,7 +54,7 @@ export default function Home() {
       setForm({ to: "", subject: "", body: "" });
 
       // Refresh history after send
-      const updatedHistory = await fetch("https://13.113.28.205/email/history").then((res) =>
+      const updatedHistory = await fetch("http://localhost:8081/email/history").then((res) =>
         res.json()
       );
       setHistory(updatedHistory);
