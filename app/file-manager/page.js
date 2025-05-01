@@ -16,7 +16,7 @@ export default function FileManager() {
 
   const fetchFiles = async () => {
     try {
-      const response = await fetch("http://localhost:8081/s3/files", {
+      const response = await fetch("https://3.112.227.170/s3/files", {
         method: "GET",
         mode: "cors",
       });
@@ -44,7 +44,7 @@ export default function FileManager() {
     formData.append("file", selectedFile);
 
     try {
-      const response = await fetch("http://localhost:8081/s3/upload", {
+      const response = await fetch("https://3.112.227.170/s3/upload", {
         method: "POST",
         body: formData,
         mode: "cors",
@@ -66,7 +66,7 @@ export default function FileManager() {
     if (!window.confirm(`Are you sure you want to delete ${filename}?`)) return;
 
     try {
-      const response = await fetch(`http://localhost:8081/s3/delete/${filename}`, {
+      const response = await fetch(`https://3.112.227.170/s3/delete/${filename}`, {
         method: "DELETE",
         mode: "cors",
       });
