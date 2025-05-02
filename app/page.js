@@ -1,6 +1,6 @@
-"use client";
+"use client"; // Ensure this is at the top for client-side code
+
 import { useState, useEffect } from "react";
-import Image from "next/image";
 import Link from "next/link";
 import styles from "./page.module.css";
 
@@ -14,6 +14,7 @@ export default function Home() {
   const [history, setHistory] = useState([]);
   const [loading, setLoading] = useState(false);
 
+  // Fetch email history
   useEffect(() => {
     fetch("https://3.112.227.170/email/history", {
       method: "GET",
@@ -48,15 +49,23 @@ export default function Home() {
       });
 
       if (!res.ok) throw new Error(`HTTP error! status: ${res.status}`);
-      const result = await res.json();
 
-      alert("Email sent successfully!");
+      const contentType = res.headers.get("content-type");
+      let result;
+
+      if (contentType && contentType.includes("application/json")) {
+        result = await res.json();
+        alert(result.message || "Email sent successfully!");
+      } else {
+        result = await res.text();
+        alert(result || "Email sent successfully!");
+      }
+
       setForm({ to: "", subject: "", body: "" });
 
-      // Refresh history after send
-      const updatedHistory = await fetch("https://3.112.227.170/email/history").then((res) =>
-        res.json()
-      );
+      // Refresh email history
+      const updatedHistory = await fetch("https://3.112.227.170/email/history")
+        .then((res) => res.json());
       setHistory(updatedHistory);
     } catch (error) {
       console.error("API Error:", error);
@@ -133,7 +142,7 @@ export default function Home() {
                   <strong>Sent At:</strong>{" "}
                   {new Date(record.sentDate).toLocaleString()} <br />
                   <strong>Status:</strong>{" "}
-                  {record.success ? " Success" : ` Failed: ${record.errorMessage}`} <br />
+                  {record.success ? "Success" : `Failed: ${record.errorMessage}`} <br />
                   <hr />
                 </li>
               ))}

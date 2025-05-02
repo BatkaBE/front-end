@@ -98,7 +98,7 @@ export default function FileManager() {
 
       <main className={styles.main}>
         <h1>File Manager</h1>
-        
+      
         {/* Upload Section */}
         <section className={styles.section}>
           <h2>Upload File</h2>
